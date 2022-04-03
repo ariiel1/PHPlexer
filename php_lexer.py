@@ -68,7 +68,6 @@ def lexer(file):
         col = 0
         while (col < len(line)):
             
-
             # SINGLE LINE COMMENT
             if ((line[col:(col + len("//"))] == "//") or (line[col:(col + len("#"))] == "#")):
                 break
@@ -76,7 +75,7 @@ def lexer(file):
             # MULTI LINE COMMENT
             if ((line[col:col + len("/*")] == "/*") and (not in_comment)):
                 in_comment = True
-                start_row = row
+                start_row = row    # for keeping position of comment tag in case of error
                 start_col = col
                 col += len("/*")
             if ((line[col:col + len("*/")] == "*/") and (in_comment)):
@@ -143,14 +142,14 @@ def lexer(file):
             elif(in_comment):
                 break
 
-            # ERROR
+            # GENERAL SYNTAX ERROR
             else:
                 raise SyntaxError(f"{file}:{row + 1}:{col + 1}:INVALID SYNTAX")
-        
+    
+    # COMMENT NOT TERMINATED ERROR
     if (in_comment):
         raise SyntaxError(f"{file}:{start_row + 1}:{start_col + 1}:COMMENT NOT TERMINATED")
                       
-
     return result
 
 
